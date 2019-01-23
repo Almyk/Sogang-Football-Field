@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <com.github.sundeepk.compactcalendarview.CompactCalendarView
+        android:id="@+id/ccv_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        app:compactCalendarBackgroundColor="#D3D3D3"
+        app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
+        app:compactCalendarEventIndicatorStyle="small_indicator"
+        app:compactCalendarOtherMonthDaysTextColor="#534c4c"
+        app:compactCalendarShouldSelectFirstDayOfMonthOnScroll="true"
+        app:compactCalendarTargetHeight="400dp"
+        app:compactCalendarTextSize="16sp" />
+
+    <ListView
+        android:id="@+id/lv_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/ccv_calendar"
+        android:background="#FFF"/>
+
+</android.support.constraint.ConstraintLayout>
