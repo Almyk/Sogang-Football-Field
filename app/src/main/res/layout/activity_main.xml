@@ -10,10 +10,11 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Month - Year"
         android:textSize="24sp"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/ccv_calendar"
-        android:background="#D3D3D3"/>
+        android:background="#DEDEDE"/>
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
         android:id="@+id/ccv_calendar"
@@ -33,6 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/ccv_calendar"
-        android:background="#FFF"/>
+        android:background="#DEDEDE"/>
 
 </android.support.constraint.ConstraintLayout>
