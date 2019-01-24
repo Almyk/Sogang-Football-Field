@@ -48,10 +48,16 @@ public class MainActivity extends AppCompatActivity {
     private List<String> mEventList = new ArrayList<>();
     private ArrayAdapter mEventAdapter;
 
+    private String mUsername;
+
+    private final static String DEFAULT_NAME = "Anon";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mUsername = DEFAULT_NAME;
 
         // find views
         mCompactCalendarView = findViewById(R.id.ccv_calendar);
@@ -97,11 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
                 showAddEventDialog();
-//                Object object = dateFormat.format(mDateClicked);
-//                Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
-//                mCompactCalendarView.addEvent(event);
-//                mEventList.add(event.getData().toString());
-//                mEventAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         addEvent.setAddEventListener(new AddEvent.AddEventListener() {
             @Override
             public void onSubmitEvent(String time) {
-                Object object = dateFormat.format(mDateClicked) + " " + time;
+                Object object = mUsername + ": " + dateFormat.format(mDateClicked) + " " + time;
                 Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
                 mCompactCalendarView.addEvent(event);
                 mEventList.add(event.getData().toString());
