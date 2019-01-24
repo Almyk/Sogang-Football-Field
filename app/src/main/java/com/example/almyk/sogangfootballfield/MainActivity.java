@@ -1,6 +1,5 @@
 package com.example.almyk.sogangfootballfield;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
