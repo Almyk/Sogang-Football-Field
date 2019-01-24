@@ -7,7 +7,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -17,24 +20,38 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
 
+    // views
     private CompactCalendarView mCompactCalendarView;
     private TextView mTitleTextView;
+
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+    private Date mDateClicked = new Date();
+
+    // firebase members
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mEventsDatabaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // find views
         mCompactCalendarView = findViewById(R.id.ccv_calendar);
         mTitleTextView = findViewById(R.id.tv_title);
+
+        // Firebase init
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mEventsDatabaseRef = mFirebaseDatabase.getReference("events");
 
         mTitleTextView.setText(dateFormatForMonth.format(mCompactCalendarView.getFirstDayOfCurrentMonth()));
         mCompactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
                 mTitleTextView.setText(dateFormatForMonth.format(dateClicked));
-                Log.v(TAG, "Date clicked: " + dateClicked.toString());
-                Toast.makeText(getApplicationContext(), "Clicked on: " + dateClicked.toString(), Toast.LENGTH_LONG).show();
+                mDateClicked = dateClicked;
+                Log.v(TAG, "Date clicked: " + dateFormat.format(dateClicked));
+                Toast.makeText(getApplicationContext(), "Clicked on: " + dateFormat.format(dateClicked), Toast.LENGTH_LONG).show();
             }
 
             @Override
