@@ -19,6 +19,15 @@ public class AddEvent extends DialogFragment {
     private TimePicker mTimePicker;
     private Button mSubmitButton;
     private Button mCancelButton;
+    private AddEventListener mListener;
+
+    public interface AddEventListener {
+        void onSubmitEvent(String time);
+    }
+
+    public void setAddEventListener(AddEventListener listener){
+        mListener = listener;
+    }
 
     @Nullable
     @Override
@@ -36,7 +45,12 @@ public class AddEvent extends DialogFragment {
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(view.getContext(), "Clicked Submit!", Toast.LENGTH_SHORT).show();
+                int hour = mTimePicker.getHour();
+                int minute = mTimePicker.getMinute();
+                String time = new String(hour + ":" + minute);
+                Toast.makeText(view.getContext(), time, Toast.LENGTH_SHORT).show();
+                mListener.onSubmitEvent(time);
+                dismiss();
             }
         });
 

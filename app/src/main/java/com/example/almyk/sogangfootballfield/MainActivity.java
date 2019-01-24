@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 mTitleTextView.setText(dateFormatForMonth.format(firstDayOfNewMonth));
-                //mEventList.clear();
-                //mEventAdapter.notifyDataSetChanged();
             }
         });
 
@@ -111,6 +109,16 @@ public class MainActivity extends AppCompatActivity {
     private void showAddEventDialog(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         AddEvent addEvent = new AddEvent();
+        addEvent.setAddEventListener(new AddEvent.AddEventListener() {
+            @Override
+            public void onSubmitEvent(String time) {
+                Object object = dateFormat.format(mDateClicked) + " " + time;
+                Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
+                mCompactCalendarView.addEvent(event);
+                mEventList.add(event.getData().toString());
+                mEventAdapter.notifyDataSetChanged();
+            }
+        });
         addEvent.show(fragmentManager, "dialog_add_new_event");
     }
 }
