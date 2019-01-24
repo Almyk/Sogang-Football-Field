@@ -49,7 +49,7 @@ public class AddEvent extends DialogFragment {
                 int minute = mTimePicker.getMinute();
                 String sTime = new String(hour + ":" + minute);
                 String eTime = new String((hour + 2) + ":" + minute);
-                Toast.makeText(view.getContext(), sTime, Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), "Request sent!", Toast.LENGTH_SHORT).show();
                 mListener.onSubmitEvent(sTime, eTime);
                 dismiss();
             }
