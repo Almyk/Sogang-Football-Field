@@ -1,6 +1,7 @@
 package com.example.almyk.sogangfootballfield;
 
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private CompactCalendarView mCompactCalendarView;
     private TextView mTitleTextView;
     private ListView mEventListView;
+    private ConstraintLayout mNamesTimesLayout;
 
     private FloatingActionButton mAddEventFAB;
 
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         mCompactCalendarView = findViewById(R.id.ccv_calendar);
         mTitleTextView = findViewById(R.id.tv_title);
         mEventListView = findViewById(R.id.lv_events);
+        mNamesTimesLayout = findViewById(R.id.cl_names_n_times);
 
         mAddEventFAB = findViewById(R.id.fab_add_event);
 
@@ -84,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Clicked on: " + dateFormat.format(dateClicked), Toast.LENGTH_LONG).show();
                 List<Event> eventList = mCompactCalendarView.getEvents(dateClicked);
                 mEventList.clear();
+                if(eventList.isEmpty()){
+                    mNamesTimesLayout.setVisibility(View.GONE);
+                }
+                else {
+                    mNamesTimesLayout.setVisibility(View.VISIBLE);
+                }
                 for(Event event : eventList){
                     mEventList.add(convertEventToBooking(event));
                 }
@@ -117,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 mCompactCalendarView.addEvent(event);
                 mEventList.add(convertEventToBooking(event));
                 mEventAdapter.notifyDataSetChanged();
+                mNamesTimesLayout.setVisibility(View.VISIBLE);
             }
         });
         addEvent.show(fragmentManager, "dialog_add_new_event");
