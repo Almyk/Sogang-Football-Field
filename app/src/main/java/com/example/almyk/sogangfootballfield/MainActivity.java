@@ -1,7 +1,9 @@
 package com.example.almyk.sogangfootballfield;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -96,12 +98,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
-                Object object = dateFormat.format(mDateClicked);
-                Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
-                mCompactCalendarView.addEvent(event);
-                mEventList.add(event.getData().toString());
-                mEventAdapter.notifyDataSetChanged();
+                showAddEventDialog();
+//                Object object = dateFormat.format(mDateClicked);
+//                Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
+//                mCompactCalendarView.addEvent(event);
+//                mEventList.add(event.getData().toString());
+//                mEventAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    private void showAddEventDialog(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        AddEvent addEvent = new AddEvent();
+        addEvent.show(fragmentManager, "dialog_add_new_event");
     }
 }
