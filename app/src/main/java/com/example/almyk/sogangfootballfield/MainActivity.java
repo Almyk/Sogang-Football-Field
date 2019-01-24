@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -71,15 +73,19 @@ public class MainActivity extends AppCompatActivity {
                 mDateClicked = dateClicked;
                 Log.v(TAG, "Date clicked: " + dateFormat.format(dateClicked));
                 Toast.makeText(getApplicationContext(), "Clicked on: " + dateFormat.format(dateClicked), Toast.LENGTH_LONG).show();
+                List<Event> eventList = mCompactCalendarView.getEvents(dateClicked);
                 mEventList.clear();
+                for(Event event : eventList){
+                    mEventList.add(event.getData().toString());
+                }
                 mEventAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 mTitleTextView.setText(dateFormatForMonth.format(firstDayOfNewMonth));
-                mEventList.clear();
-                mEventAdapter.notifyDataSetChanged();
+                //mEventList.clear();
+                //mEventAdapter.notifyDataSetChanged();
             }
         });
 
@@ -88,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
-                mEventList.add(dateFormat.format(mDateClicked));
+                //mEventList.add(dateFormat.format(mDateClicked));
+                Object object = dateFormat.format(mDateClicked);
+                Event event = new Event(1, mDateClicked.getTime(), object);
+                mCompactCalendarView.addEvent(event);
+                mEventList.add(event.getData().toString());
                 mEventAdapter.notifyDataSetChanged();
             }
         });
