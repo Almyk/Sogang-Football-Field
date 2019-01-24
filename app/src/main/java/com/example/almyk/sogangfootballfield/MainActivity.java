@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +16,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     // views
     private CompactCalendarView mCompactCalendarView;
     private TextView mTitleTextView;
+    private ListView mEventListView;
 
     private FloatingActionButton mAddEventFAB;
 
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mEventsDatabaseRef;
 
+    private List<String> mEventList = new ArrayList<>();
+    private ArrayAdapter mEventAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,12 +51,17 @@ public class MainActivity extends AppCompatActivity {
         // find views
         mCompactCalendarView = findViewById(R.id.ccv_calendar);
         mTitleTextView = findViewById(R.id.tv_title);
+        mEventListView = findViewById(R.id.lv_events);
 
         mAddEventFAB = findViewById(R.id.fab_add_event);
+
+        mEventAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.event_item, mEventList);
 
         // Firebase init
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mEventsDatabaseRef = mFirebaseDatabase.getReference("events");
+
+        mEventListView.setAdapter(mEventAdapter);
 
         mTitleTextView.setText(dateFormatForMonth.format(mCompactCalendarView.getFirstDayOfCurrentMonth()));
         mCompactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
@@ -58,11 +71,15 @@ public class MainActivity extends AppCompatActivity {
                 mDateClicked = dateClicked;
                 Log.v(TAG, "Date clicked: " + dateFormat.format(dateClicked));
                 Toast.makeText(getApplicationContext(), "Clicked on: " + dateFormat.format(dateClicked), Toast.LENGTH_LONG).show();
+                mEventList.clear();
+                mEventAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 mTitleTextView.setText(dateFormatForMonth.format(firstDayOfNewMonth));
+                mEventList.clear();
+                mEventAdapter.notifyDataSetChanged();
             }
         });
 
@@ -71,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
+                mEventList.add(dateFormat.format(mDateClicked));
+                mEventAdapter.notifyDataSetChanged();
             }
         });
     }
