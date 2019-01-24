@@ -22,7 +22,7 @@ public class AddEvent extends DialogFragment {
     private AddEventListener mListener;
 
     public interface AddEventListener {
-        void onSubmitEvent(String time);
+        void onSubmitEvent(String sTime, String eTime);
     }
 
     public void setAddEventListener(AddEventListener listener){
@@ -47,9 +47,10 @@ public class AddEvent extends DialogFragment {
             public void onClick(View v) {
                 int hour = mTimePicker.getHour();
                 int minute = mTimePicker.getMinute();
-                String time = new String(hour + ":" + minute);
-                Toast.makeText(view.getContext(), time, Toast.LENGTH_SHORT).show();
-                mListener.onSubmitEvent(time);
+                String sTime = new String(hour + ":" + minute);
+                String eTime = new String((hour + 2) + ":" + minute);
+                Toast.makeText(view.getContext(), sTime, Toast.LENGTH_SHORT).show();
+                mListener.onSubmitEvent(sTime, eTime);
                 dismiss();
             }
         });

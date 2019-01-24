@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mEventsDatabaseRef;
 
-    private List<String> mEventList = new ArrayList<>();
-    private ArrayAdapter mEventAdapter;
+    private List<Booking> mEventList = new ArrayList<>();
+    private EventAdapter mEventAdapter;
 
     private String mUsername;
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAddEventFAB = findViewById(R.id.fab_add_event);
 
-        mEventAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.event_item, mEventList);
+        mEventAdapter = new EventAdapter(this, R.layout.event_item, mEventList);
 
         // Firebase init
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 List<Event> eventList = mCompactCalendarView.getEvents(dateClicked);
                 mEventList.clear();
                 for(Event event : eventList){
-                    mEventList.add(event.getData().toString());
+                    mEventList.add(convertEventToBooking(event));
                 }
                 mEventAdapter.notifyDataSetChanged();
             }
@@ -111,14 +111,25 @@ public class MainActivity extends AppCompatActivity {
         AddEvent addEvent = new AddEvent();
         addEvent.setAddEventListener(new AddEvent.AddEventListener() {
             @Override
-            public void onSubmitEvent(String time) {
-                Object object = mUsername + ": " + dateFormat.format(mDateClicked) + " " + time;
+            public void onSubmitEvent(String sTime, String eTime) {
+                Object object = mUsername + ":" + sTime + "~" + eTime;
                 Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
                 mCompactCalendarView.addEvent(event);
-                mEventList.add(event.getData().toString());
+                mEventList.add(convertEventToBooking(event));
                 mEventAdapter.notifyDataSetChanged();
             }
         });
         addEvent.show(fragmentManager, "dialog_add_new_event");
+    }
+
+    private Booking convertEventToBooking(Event event){
+        Booking booking = new Booking();
+        String string = event.getData().toString();
+        int idx = string.indexOf(':');
+        booking.setName(string.substring(0,idx));
+        int idx2 = string.indexOf('~');
+        booking.setStartTime(string.substring(idx+1,idx2));
+        booking.setEndTime(string.substring(idx2+1));
+        return booking;
     }
 }
