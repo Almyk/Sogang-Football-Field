@@ -1,8 +1,10 @@
 package com.example.almyk.sogangfootballfield;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private CompactCalendarView mCompactCalendarView;
     private TextView mTitleTextView;
 
+    private FloatingActionButton mAddEventFAB;
+
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
     private Date mDateClicked = new Date();
 
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         // find views
         mCompactCalendarView = findViewById(R.id.ccv_calendar);
         mTitleTextView = findViewById(R.id.tv_title);
+
+        mAddEventFAB = findViewById(R.id.fab_add_event);
 
         // Firebase init
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -57,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 mTitleTextView.setText(dateFormatForMonth.format(firstDayOfNewMonth));
+            }
+        });
+
+        mAddEventFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
+                Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
