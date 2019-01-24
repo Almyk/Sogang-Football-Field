@@ -47,8 +47,9 @@ public class AddEvent extends DialogFragment {
             public void onClick(View v) {
                 int hour = mTimePicker.getHour();
                 int minute = mTimePicker.getMinute();
-                String sTime = new String(hour + ":" + minute);
-                String eTime = new String((hour + 2) + ":" + minute);
+                String sTime = new String(createTimeString(hour, minute));
+                String eTime = new String(createTimeString(hour+2, minute));
+
                 Toast.makeText(view.getContext(), "Request sent!", Toast.LENGTH_SHORT).show();
                 mListener.onSubmitEvent(sTime, eTime);
                 dismiss();
@@ -61,5 +62,23 @@ public class AddEvent extends DialogFragment {
                 AddEvent.this.getDialog().cancel();
             }
         });
+    }
+
+    private String createTimeString(int hour, int minute) {
+        String string;
+        String sHour = Integer.toString(hour);
+        String sMinute = Integer.toString(minute);
+        if(sHour.length() == 1) {
+            sHour = '0' + sHour;
+        }
+        if(sMinute.length() == 1) {
+            if(minute == 0) {
+                sMinute = sMinute + '0';
+            } else {
+                sMinute = '0' + sMinute;
+            }
+        }
+        string = sHour + ":" + sMinute;
+        return string;
     }
 }
