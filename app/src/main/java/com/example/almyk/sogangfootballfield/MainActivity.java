@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 mTitleTextView.setText(dateFormatForMonth.format(dateClicked));
                 mDateClicked = dateClicked;
                 Log.v(TAG, "Date clicked: " + dateFormat.format(dateClicked));
-                Toast.makeText(getApplicationContext(), "Clicked on: " + dateFormat.format(dateClicked), Toast.LENGTH_LONG).show();
                 List<Event> eventList = mCompactCalendarView.getEvents(dateClicked);
                 mEventList.clear();
                 if(eventList.isEmpty()){
@@ -108,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
         mAddEventFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO : store new events in database
                 DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
-                Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
                 showAddEventDialog();
             }
         });
