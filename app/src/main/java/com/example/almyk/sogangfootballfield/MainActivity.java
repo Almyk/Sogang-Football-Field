@@ -1,5 +1,6 @@
 package com.example.almyk.sogangfootballfield;
 
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         mEventListView.setAdapter(mEventAdapter);
 
         mTitleTextView.setText(dateFormatForMonth.format(mCompactCalendarView.getFirstDayOfCurrentMonth()));
+
         mCompactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
@@ -94,9 +96,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 Toast.makeText(getApplicationContext(), databaseReference.toString(), Toast.LENGTH_LONG).show();
-                //mEventList.add(dateFormat.format(mDateClicked));
                 Object object = dateFormat.format(mDateClicked);
-                Event event = new Event(1, mDateClicked.getTime(), object);
+                Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
                 mCompactCalendarView.addEvent(event);
                 mEventList.add(event.getData().toString());
                 mEventAdapter.notifyDataSetChanged();
