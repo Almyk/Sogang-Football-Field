@@ -1,6 +1,6 @@
 package com.example.almyk.sogangfootballfield;
 
-public class Booking {
+public class Booking extends Object {
     private String mName;
     private String mStartTime;
     private String mEndTime;

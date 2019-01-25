@@ -1,6 +1,8 @@
 package com.example.almyk.sogangfootballfield;
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +18,9 @@ import android.widget.Toast;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     // firebase members
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mEventsDatabaseRef;
+    private ChildEventListener mChildEventListener;
 
     private List<Booking> mEventList = new ArrayList<>();
     private EventAdapter mEventAdapter;
@@ -93,9 +99,8 @@ public class MainActivity extends AppCompatActivity {
                     mNamesTimesLayout.setVisibility(View.VISIBLE);
                 }
                 for(Event event : eventList){
-                    mEventList.add(convertEventToBooking(event));
+                    mEventAdapter.add((Booking) event.getData());
                 }
-                mEventAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -112,34 +117,80 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mChildEventListener == null){
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    EventForFirebase eventForFirebase = dataSnapshot.getValue(EventForFirebase.class);
+                    Event event = new Event(eventForFirebase.getColor(), eventForFirebase.getTimeInMillis(), eventForFirebase.getData());
+                    mCompactCalendarView.addEvent(event);
+                    updateEventListView();
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            mEventsDatabaseRef.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void updateEventListView() {
+        List<Event> eventList = mCompactCalendarView.getEvents(mDateClicked);
+        mEventList.clear();
+        if(eventList.isEmpty()){
+            mNamesTimesLayout.setVisibility(View.GONE);
+        }
+        else {
+            mNamesTimesLayout.setVisibility(View.VISIBLE);
+        }
+        for(Event event : eventList){
+            mEventAdapter.add((Booking) event.getData());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mChildEventListener != null){
+            Log.e("onDestroy", "detach");
+            mEventsDatabaseRef.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+    }
+
     private void showAddEventDialog(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         AddEvent addEvent = new AddEvent();
         addEvent.setAddEventListener(new AddEvent.AddEventListener() {
             @Override
             public void onSubmitEvent(String sTime, String eTime) {
-                DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
-                Object object = mUsername + ":" + sTime + "~" + eTime;
-                Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
-                Booking booking = convertEventToBooking(event);
-                databaseReference.push().setValue(booking);
-                mCompactCalendarView.addEvent(event);
-                mEventList.add(booking);
-                mEventAdapter.notifyDataSetChanged();
+                Booking booking = new Booking(mUsername, sTime, eTime);
+                Event event = new Event(Color.CYAN, mDateClicked.getTime(), booking);
+                EventForFirebase eventForFirebase = new EventForFirebase(event);
+                mEventsDatabaseRef.push().setValue(eventForFirebase);
                 mNamesTimesLayout.setVisibility(View.VISIBLE);
             }
         });
         addEvent.show(fragmentManager, "dialog_add_new_event");
-    }
-
-    private Booking convertEventToBooking(Event event){
-        Booking booking = new Booking();
-        String string = event.getData().toString();
-        int idx = string.indexOf(':');
-        booking.setName(string.substring(0,idx));
-        int idx2 = string.indexOf('~');
-        booking.setStartTime(string.substring(idx+1,idx2));
-        booking.setEndTime(string.substring(idx2+1));
-        return booking;
     }
 }
