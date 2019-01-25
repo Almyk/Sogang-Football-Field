@@ -107,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
         mAddEventFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO : store new events in database
-                DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 showAddEventDialog();
             }
         });
@@ -120,10 +118,13 @@ public class MainActivity extends AppCompatActivity {
         addEvent.setAddEventListener(new AddEvent.AddEventListener() {
             @Override
             public void onSubmitEvent(String sTime, String eTime) {
+                DatabaseReference databaseReference = mEventsDatabaseRef.child(dateFormat.format(mDateClicked));
                 Object object = mUsername + ":" + sTime + "~" + eTime;
                 Event event = new Event(Color.CYAN, mDateClicked.getTime(), object);
+                Booking booking = convertEventToBooking(event);
+                databaseReference.push().setValue(booking);
                 mCompactCalendarView.addEvent(event);
-                mEventList.add(convertEventToBooking(event));
+                mEventList.add(booking);
                 mEventAdapter.notifyDataSetChanged();
                 mNamesTimesLayout.setVisibility(View.VISIBLE);
             }
