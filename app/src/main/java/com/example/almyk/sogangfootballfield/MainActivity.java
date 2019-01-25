@@ -90,17 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 mTitleTextView.setText(dateFormatForMonth.format(dateClicked));
                 mDateClicked = dateClicked;
                 Log.v(TAG, "Date clicked: " + dateFormat.format(dateClicked));
-                List<Event> eventList = mCompactCalendarView.getEvents(dateClicked);
-                mEventList.clear();
-                if(eventList.isEmpty()){
-                    mNamesTimesLayout.setVisibility(View.GONE);
-                }
-                else {
-                    mNamesTimesLayout.setVisibility(View.VISIBLE);
-                }
-                for(Event event : eventList){
-                    mEventAdapter.add((Booking) event.getData());
-                }
+                updateEventListView();
             }
 
             @Override
