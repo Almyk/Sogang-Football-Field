@@ -169,17 +169,8 @@ public class MainActivity extends AppCompatActivity {
     private void signedOutCleanup() {
         mUsername = DEFAULT_NAME;
         mEventAdapter.clear();
-        if(mChildEventListener != null){
-            mEventsDatabaseRef.removeEventListener(mChildEventListener);
-            mChildEventListener = null;
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // TODO : attach authStateListener
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+        mCompactCalendarView.removeAllEvents();
+        detachDatabaseEventListener();
     }
 
     private void updateEventListView() {
@@ -197,8 +188,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        detachDatabaseEventListener();
+        mCompactCalendarView.removeAllEvents();
+        mEventAdapter.clear();
+    }
+
+    private void detachDatabaseEventListener() {
         if(mChildEventListener != null){
             mEventsDatabaseRef.removeEventListener(mChildEventListener);
             mChildEventListener = null;
