@@ -212,19 +212,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAddEventDialog(){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        AddEvent addEvent = new AddEvent();
-        addEvent.setAddEventListener(new AddEvent.AddEventListener() {
-            @Override
-            public void onSubmitEvent(String sTime, String eTime) {
-                Booking booking = new Booking(mUsername, sTime, eTime);
-                Event event = new Event(Color.CYAN, mDateClicked.getTime(), booking);
-                EventForFirebase eventForFirebase = new EventForFirebase(event);
-                mEventsDatabaseRef.push().setValue(eventForFirebase);
-                mNamesTimesLayout.setVisibility(View.VISIBLE);
-            }
-        });
-        addEvent.show(fragmentManager, "dialog_add_new_event");
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if(user.getEmail().endsWith("sogang.ac.kr") && user.isEmailVerified()) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            AddEvent addEvent = new AddEvent();
+            addEvent.setAddEventListener(new AddEvent.AddEventListener() {
+                @Override
+                public void onSubmitEvent(String sTime, String eTime) {
+                    Booking booking = new Booking(mUsername, sTime, eTime);
+                    Event event = new Event(Color.CYAN, mDateClicked.getTime(), booking);
+                    EventForFirebase eventForFirebase = new EventForFirebase(event);
+                    mEventsDatabaseRef.push().setValue(eventForFirebase);
+                    mNamesTimesLayout.setVisibility(View.VISIBLE);
+                }
+            });
+            addEvent.show(fragmentManager, "dialog_add_new_event");
+        } else {
+            Toast.makeText(this, "Need to register and verify account using a sogang email", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -234,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
             case RC_SIGN_IN:
                 if(resultCode == RESULT_OK) {
                     Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                    mFirebaseAuth.getCurrentUser().sendEmailVerification();
                 } else if(resultCode == RESULT_CANCELED) {
                     Toast.makeText(this, "Sign in Cancelled.", Toast.LENGTH_SHORT).show();
                     finish();
