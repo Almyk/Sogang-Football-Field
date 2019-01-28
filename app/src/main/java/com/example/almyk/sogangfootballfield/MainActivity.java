@@ -1,5 +1,6 @@
 package com.example.almyk.sogangfootballfield;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,9 +16,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mEventsDatabaseRef;
     private ChildEventListener mChildEventListener;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private List<Booking> mEventList = new ArrayList<>();
     private EventAdapter mEventAdapter;
@@ -58,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private String mUsername;
 
     private final static String DEFAULT_NAME = "Anon";
+    private final static int RC_SIGN_IN = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         // Firebase init
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mEventsDatabaseRef = mFirebaseDatabase.getReference("events");
+        mFirebaseAuth = FirebaseAuth.getInstance();
 
         mEventListView.setAdapter(mEventAdapter);
 
@@ -105,11 +113,25 @@ public class MainActivity extends AppCompatActivity {
                 showAddEventDialog();
             }
         });
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null) {
+                    // is signed in
+                    signedInInit(user.getDisplayName());
+                } else {
+                    // not signed in
+                    signedOutCleanup();
+                    startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(), RC_SIGN_IN);
+                }
+            }
+        };
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void signedInInit(String displayName) {
+        mUsername = displayName;
         if(mChildEventListener == null){
             mChildEventListener = new ChildEventListener() {
                 @Override
@@ -144,6 +166,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void signedOutCleanup() {
+        mUsername = DEFAULT_NAME;
+        mEventAdapter.clear();
+        if(mChildEventListener != null){
+            mEventsDatabaseRef.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // TODO : attach authStateListener
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
     private void updateEventListView() {
         List<Event> eventList = mCompactCalendarView.getEvents(mDateClicked);
         mEventList.clear();
@@ -159,10 +197,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         if(mChildEventListener != null){
-            Log.e("onDestroy", "detach");
             mEventsDatabaseRef.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
@@ -182,5 +219,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         addEvent.show(fragmentManager, "dialog_add_new_event");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case RC_SIGN_IN:
+                if(resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                } else if(resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Sign in Cancelled.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
