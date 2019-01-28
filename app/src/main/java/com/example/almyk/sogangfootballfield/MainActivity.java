@@ -239,7 +239,10 @@ public class MainActivity extends AppCompatActivity {
             case RC_SIGN_IN:
                 if(resultCode == RESULT_OK) {
                     Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-                    mFirebaseAuth.getCurrentUser().sendEmailVerification();
+                    if(!mFirebaseAuth.getCurrentUser().isEmailVerified()) {
+                        Toast.makeText(this, "Email verification email sent!", Toast.LENGTH_LONG);
+                        mFirebaseAuth.getCurrentUser().sendEmailVerification();
+                    }
                 } else if(resultCode == RESULT_CANCELED) {
                     Toast.makeText(this, "Sign in Cancelled.", Toast.LENGTH_SHORT).show();
                     finish();
