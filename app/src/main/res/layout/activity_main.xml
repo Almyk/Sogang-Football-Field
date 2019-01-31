@@ -15,20 +15,30 @@
         android:textSize="24sp"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/ccv_calendar"
-        android:background="#DEDEDE"/>
+        android:background="#b60005"/>
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
         android:id="@+id/ccv_calendar"
         android:layout_width="match_parent"
         android:layout_height="350dp"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        app:compactCalendarBackgroundColor="#D3D3D3"
+        app:compactCalendarBackgroundColor="#ffffff"
         app:compactCalendarCurrentDayIndicatorStyle="fill_large_indicator"
         app:compactCalendarEventIndicatorStyle="small_indicator"
         app:compactCalendarOtherMonthDaysTextColor="#534c4c"
         app:compactCalendarShouldSelectFirstDayOfMonthOnScroll="false"
         app:compactCalendarTargetHeight="400dp"
-        app:compactCalendarTextSize="16sp" />
+        app:compactCalendarTextSize="16sp"
+        app:compactCalendarCurrentDayBackgroundColor="#b60005"
+        app:compactCalendarCurrentSelectedDayBackgroundColor="#f0f0f0"
+        app:compactCalendarCurrentSelectedDayIndicatorStyle="no_fill_large_indicator"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:background="#b60005"
+        app:layout_constraintTop_toBottomOf="@id/ccv_calendar"
+        app:layout_constraintBottom_toTopOf="@id/cl_names_n_times"/>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_names_n_times"
@@ -39,7 +49,8 @@
         app:layout_constraintTop_toBottomOf="@+id/ccv_calendar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/lv_events">
+        app:layout_constraintBottom_toTopOf="@+id/lv_events"
+        android:background="#f0f0f0">
 
 
         <TextView
@@ -82,7 +93,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="#DEDEDE"/>
+        android:background="#ffffff"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add_event"
@@ -91,6 +102,7 @@
         android:src="@drawable/ic_add_event"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        app:backgroundTint="#b60005"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -2,19 +2,21 @@ package com.example.almyk.sogangfootballfield;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -220,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onSubmitEvent(String sTime, String eTime) {
                     Booking booking = new Booking(mUsername, sTime, eTime);
-                    Event event = new Event(Color.CYAN, mDateClicked.getTime(), booking);
+                    Event event = new Event(Color.parseColor("#b60005"), mDateClicked.getTime(), booking);
                     EventForFirebase eventForFirebase = new EventForFirebase(event);
                     mEventsDatabaseRef.push().setValue(eventForFirebase);
                     mNamesTimesLayout.setVisibility(View.VISIBLE);
