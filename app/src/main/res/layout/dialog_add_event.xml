@@ -10,7 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/colorAccent"
+        android:numbersBackgroundColor="@color/white"
+        android:headerBackground="@color/colorPrimaryDark"
+        android:numbersSelectorColor="@color/colorAccent"
+        android:numbersTextColor="@color/black"/>
 
     <Button
         android:id="@+id/btn_submit"
